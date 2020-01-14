@@ -204,13 +204,21 @@ class CommandBus extends AnswerBus
      */
     protected function process($entity, Update $update)
     {
-        $command = $this->parseCommand(
-            $update->getMessage()->text,
-            $entity['offset'],
-            $entity['length']
-        );
-
-        $this->execute($command, $update, $entity);
+        if($update->getMessage()->detectType() == "text"){
+            $command = $this->parseCommand(
+                $update->getMessage()->text,
+                $entity['offset'],
+                $entity['length']
+            );
+            $this->execute($command, $update, $entity);
+        }else{
+            $command = $this->parseCommand(
+                $update->getMessage()->caption,
+                $entity['offset'],
+                $entity['length']
+            );
+            $this->execute($command, $update, $entity);
+        }
     }
 
     /**
